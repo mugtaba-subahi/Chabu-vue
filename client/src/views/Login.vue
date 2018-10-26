@@ -58,7 +58,7 @@ export default class Login extends Vue {
     // handle errors
     if (response.data.errors.length) {
       const { errors } = response.data;
-      this.formErrors = mixins.methods.appendErrorsMixin(errors, this.formErrors);
+      mixins.methods.appendErrorsMixin(errors, this.formErrors);
     }
 
     this.loginLoader = false;
