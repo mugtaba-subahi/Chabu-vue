@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": ["plugin:vue/essential", "@vue/airbnb"],
+  "settings": {
+    "html/html-extensions": [".html", ".we"]
+  },
+  "rules": {
+    "linebreak-style": 0,
+    "comma-dangle": 0,
+    "class-methods-use-this": 0,
+    "no-console": 0,
+    "max-len": ["error", { "code": 140 }]
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  }
+}
