@@ -1,10 +1,28 @@
 <template>
   <form class="form" v-on:submit.prevent="submit">
-    <h1 class="company"> Chabu </h1>
-    <h2 class="title"> Login </h2>
-    <InputWithError placeholder="Username" :value="formValues.username" :error="formErrors.username" required />
-    <InputWithError placeholder="Password" :value="formValues.password" :error="formErrors.password" required />
-    <ButtonWithLoader class="submit" :buttonType="'primary'" :text="'Login'" :loading="loginLoader" :onClick="submit" />
+    <h1 class="company">Chabu</h1>
+    <h2 class="title">Login</h2>
+    <InputWithError
+      placeholder="Username"
+      :value="formValues.username"
+      :error="formErrors.username"
+      :changed="bindInputMixin('username')"
+      required
+    />
+    <InputWithError
+      placeholder="Password"
+      :type="'password'"
+      :value="formValues.password"
+      :error="formErrors.password"
+      :changed="bindInputMixin('password')"
+      required
+    />
+    <ButtonWithLoader
+      class="submit"
+      :buttonType="'primary'"
+      :text="'Login'"
+      :loading="loginLoader"
+    />
   </form>
 </template>
 
@@ -15,8 +33,12 @@ import Component from 'vue-class-component';
 import InputWithError from '../components/InputWithError.vue';
 import ButtonWithLoader from '../components/ButtonWithLoader.vue';
 
+import server from '../axios';
+import mixins from '../mixins';
+
 @Component({
-  components: { InputWithError, ButtonWithLoader }
+  components: { InputWithError, ButtonWithLoader },
+  mixins: [mixins]
 })
 export default class Login extends Vue {
   formValues = { username: '', password: '' };
@@ -26,6 +48,20 @@ export default class Login extends Vue {
   async submit() {
     this.loginLoader = true;
     this.resetErrors();
+
+    const response = await server.post('login', this.formValues).catch(error => error.response);
+    if (!response) {
+      this.loginLoader = false;
+      return;
+    }
+
+    // handle errors
+    if (response.data.errors.length) {
+      const { errors } = response.data;
+      this.formErrors = mixins.methods.appendErrorsMixin(errors, this.formErrors);
+    }
+
+    this.loginLoader = false;
   }
 
   resetErrors() {

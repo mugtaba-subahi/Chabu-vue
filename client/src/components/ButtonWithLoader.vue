@@ -1,11 +1,9 @@
 <template>
-  <button type='submit' :class="{[buttonType]: true}" @click="onClick" :disabled="loading">
-
-    <span class="button-container">
-      <Loader :color="spinnerColor" :size="spinnerSize" :loading="loading" />
-      <p> {{ text }} </p>
+  <button type="submit" :class="{[buttonType]: true}" @click="onClick" :disabled="loading">
+    <span class="button-span">
+      <Loader :color="spinnerColor" :size="spinnerSize" :loading="loading"/>
+      <p>{{ text }}</p>
     </span>
-
   </button>
 </template>
 
@@ -18,11 +16,11 @@ import Loader from 'vue-spinner/src/ClipLoader.vue';
 @Component({
   components: { Loader },
   props: {
-    onClick: { type: Function, required: true },
     loading: { type: Boolean, required: true },
     text: { type: String, required: true },
+    buttonType: { type: String, default: 'primary' },
     spinnerSize: { type: String, default: '13px' },
-    buttonType: { type: String, default: 'primary' }
+    onClick: { type: Function, default: () => {} }
   }
 })
 export default class ButtonWithLoader extends Vue {
@@ -39,7 +37,7 @@ export default class ButtonWithLoader extends Vue {
 <style lang="less" scoped>
 @import (reference) '../styles/index.less';
 
-.button-container {
+.button-span {
   display: grid;
   grid-column-gap: @size-3;
   grid-auto-flow: column;

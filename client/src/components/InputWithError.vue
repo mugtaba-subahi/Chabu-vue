@@ -1,19 +1,33 @@
 <template>
   <div class="input-component">
-    <input class="input" :class="{'error-border': error}" :placeholder="placeholder" :value="value" :required="required" />
-    <p class="error-message"> {{ error }} </p>
+    <input
+      class="input"
+      :type="type"
+      :class="{'error-border': error}"
+      :placeholder="placeholder"
+      :value="value"
+      :required="required"
+      @input="changed"
+    >
+    <p class="error-message">{{ error }}</p>
   </div>
 </template>
 
 <script>
-export default {
+import Vue from 'vue';
+import Component from 'vue-class-component';
+
+@Component({
   props: {
-    placeholder: String,
-    value: String,
-    error: String,
-    required: Boolean
+    placeholder: { type: String, required: true },
+    changed: { type: Function, required: true },
+    value: { type: String, required: true },
+    error: { type: String, required: true },
+    type: { type: String, default: 'text' },
+    required: { type: Boolean }
   }
-};
+})
+export default class InputWithError extends Vue {}
 </script>
 
 <style lang="less" scoped>
