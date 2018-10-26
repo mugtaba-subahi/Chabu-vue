@@ -45,6 +45,10 @@ export default class Login extends Vue {
   formErrors = { username: '', password: '' };
   loginLoader = false;
 
+  resetErrors() {
+    this.formErrors = { username: '', password: '' };
+  }
+
   async submit() {
     this.loginLoader = true;
     this.resetErrors();
@@ -55,17 +59,15 @@ export default class Login extends Vue {
       return;
     }
 
-    // handle errors
     if (response.data.errors.length) {
       const { errors } = response.data;
       mixins.methods.appendErrorsMixin(errors, this.formErrors);
+      this.loginLoader = false;
+      return;
     }
 
     this.loginLoader = false;
-  }
-
-  resetErrors() {
-    this.formErrors = { username: '', password: '' };
+    this.$router.push('/joined-rooms');
   }
 }
 </script>
