@@ -41,7 +41,7 @@ import mixins from '../mixins';
   mixins: [mixins]
 })
 export default class Login extends Vue {
-  formValues = { username: '', password: '' };
+  formValues = { username: 'sleepy', password: '12345678' };
   formErrors = { username: '', password: '' };
   loginLoader = false;
 
