@@ -7,20 +7,9 @@
     </header>
     <NavBar/>
     <main>
-      <Loader
-        class="loader"
-        :color="'#0379ff'"
-        :size="'30px'"
-        :loading="listLoader"
-        v-if="listLoader"
-      />
+      <Loader class="loader" :color="'#0379ff'" :size="'30px'" :loading="listLoader" v-if="listLoader"/>
       <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="path === '/joined-rooms'"/>
-      <RoomItem
-        v-for="(item, i) in data"
-        :key="i"
-        :content="item"
-        v-if="path === '/created-rooms'"
-      />
+      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="path === '/created-rooms'"/>
       <!-- CONTINUE OFF HERE. FIX STUPID ATTRIBUTE WRAPPING THEN MERGE BOTH ROOMITEM TAGS INTO ONE -->
       <!-- <p v-for="(item, i) in data" :key="i" v-if="path === '/created-rooms'">{{item.title}}</p>
       <p v-for="(item, i) in data" :key="i" v-if="path === '/created-questions'">{{item.title}}</p>-->

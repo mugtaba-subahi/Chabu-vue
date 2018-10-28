@@ -17,12 +17,7 @@
       :changed="bindInputMixin('password')"
       required
     />
-    <ButtonWithLoader
-      class="submit"
-      :buttonType="'primary'"
-      :text="'Login'"
-      :loading="loginLoader"
-    />
+    <ButtonWithLoader class="submit" :buttonType="'primary'" :text="'Login'" :loading="loginLoader"/>
   </form>
 </template>
 
