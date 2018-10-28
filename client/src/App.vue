@@ -1,5 +1,8 @@
 <template>
-  <router-view/>
+  <div>
+    <router-view/>
+    <portal-target name="app"/>
+  </div>
 </template>
 
 <script>

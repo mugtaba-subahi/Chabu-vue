@@ -1,6 +1,6 @@
 <template>
-  <Portal target-el="#portal">
-    <div class="background" @click="close" v-if="show">
+  <portal to="app">
+    <div class="backdrop" @click="close">
       <div class="modal" @click.stop>
         <header class="modal__header">
           <p class="modal__title">{{title}}</p>
@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-  </Portal>
+  </portal>
 </template>
 
 <script>
@@ -28,8 +28,7 @@ import ButtonWithLoader from './ButtonWithLoader.vue';
     submit: { type: Function, required: true },
     close: { type: Function, required: true },
     loader: { type: Boolean, required: true },
-    title: { type: String, required: true },
-    show: { type: Boolean, required: true }
+    title: { type: String, required: true }
     // modalType: { type: String }
   },
   components: { ButtonWithLoader }
@@ -40,7 +39,7 @@ export default class Modal extends Vue {}
 <style lang="less" scoped>
 @import (reference) '../styles/index.less';
 
-.background {
+.backdrop {
   background-color: rgba(0, 0, 0, 0);
   height: 100%;
   width: 100%;
