@@ -1,12 +1,12 @@
 <template>
-  <div class="question">
-    <i class="thumb" :class="{'thumb--true': liked}" @click="likeHandler"/>
+  <router-link class="question-item-compontent" tag="div" :to="`/r/${content.room}/${content.id}`">
+    <i class="thumb" :class="{'thumb--true': liked}" @click.stop="likedHandler"/>
     <h3 class="title">{{content.title}}</h3>
     <p class="likes">{{isNew || `${likes} likes`}}</p>
     <p class="comments">1 comments</p>
     <p class="time">{{content.timeAgo}}</p>
     <i class="delete"/>
-  </div>
+  </router-link>
 </template>
 
 <script>
@@ -30,15 +30,10 @@ export default class QuestionItem extends Vue {
   }
 
   // methods
-  async likeHandler() {
-    if (this.liked) {
-      this.likes -= 1;
-    } else {
-      this.likes += 1;
-    }
-
+  likedHandler() {
+    this.liked ? this.likes-- : this.likes++; // eslint-disable-line
     this.liked = !this.liked;
-    await server.patch(`/questions/${this.content.id}/like`);
+    server.patch(`/questions/${this.content.id}/like`);
   }
 }
 </script>
@@ -46,7 +41,8 @@ export default class QuestionItem extends Vue {
 <style lang="less" scoped>
 @import (reference) '../styles/index.less';
 
-.question {
+.question-item-compontent {
+  cursor: pointer;
   padding: @size-2--5 @size-4;
   grid-column-gap: @size-3;
   background-color: @light-gray-text-color;
@@ -59,13 +55,6 @@ export default class QuestionItem extends Vue {
   grid-template-areas:
     'thumb  title  title     title  title'
     'thumb  likes  comments  time   delete';
-}
-
-.question-today {
-  grid-template-columns: repeat(3, max-content) 1fr;
-  grid-template-areas:
-    'thumb  title     title     title'
-    'thumb  comments  time   delete';
 }
 
 .thumb {

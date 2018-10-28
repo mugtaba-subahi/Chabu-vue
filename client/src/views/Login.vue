@@ -2,21 +2,12 @@
   <form class="form" v-on:submit.prevent="submit">
     <h1 class="company">Chabu</h1>
     <h2 class="title">Login</h2>
-    <InputWithError
-      placeholder="Username"
-      :value="formValues.username"
-      :error="formErrors.username"
-      :changed="bindInputMixin('username')"
-      required
-    />
-    <InputWithError
-      placeholder="Password"
-      :type="'password'"
-      :value="formValues.password"
-      :error="formErrors.password"
-      :changed="bindInputMixin('password')"
-      required
-    />
+    <ErrorableInput :error="formErrors.username">
+      <input type="text" placeholder="Username" v-model="formValues.username" required>
+    </ErrorableInput>
+    <ErrorableInput :error="formErrors.password">
+      <input type="password" placeholder="Password" v-model="formValues.password" required>
+    </ErrorableInput>
     <ButtonWithLoader class="submit" :buttonType="'primary'" :text="'Login'" :loading="loginLoader"/>
   </form>
 </template>
@@ -25,14 +16,14 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
-import InputWithError from '../components/InputWithError.vue';
+import ErrorableInput from '../components/ErrorableInput.vue';
 import ButtonWithLoader from '../components/ButtonWithLoader.vue';
 
 import { server } from '../config';
 import mixins from '../mixins';
 
 @Component({
-  components: { InputWithError, ButtonWithLoader },
+  components: { ErrorableInput, ButtonWithLoader },
   mixins: [mixins]
 })
 export default class Login extends Vue {
@@ -57,7 +48,7 @@ export default class Login extends Vue {
 
     if (response.data.errors.length) {
       const { errors } = response.data;
-      mixins.methods.appendErrorsMixin(errors, this.formErrors);
+      this.formErrors = mixins.methods.appendErrorsMixin(errors, this.formErrors);
       this.loginLoader = false;
       return;
     }

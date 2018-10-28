@@ -28,6 +28,7 @@ export default class RoomItem extends Vue {}
   background-color: @light-gray-text-color;
   border-bottom: solid 1px rgba(238, 238, 238, 50%);
   align-items: center;
+  cursor: pointer;
 }
 
 .arrow:before {

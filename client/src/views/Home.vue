@@ -1,8 +1,8 @@
 <template>
   <div class="home-component">
     <header class="head">
-      <button class="head__join" @click="joinModal = true">Join room</button>
-      <button class="head__create" @click="createModal = true">Create room</button>
+      <button class="head__join" @click="modalShow.join = true">Join room</button>
+      <button class="head__create" @click="modalShow.create = true">Create room</button>
       <router-link class="head__settings" tag="a" to="/settings"/>
     </header>
     <NavBar/>
@@ -13,6 +13,18 @@
       <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="path === '/created-questions'"/>
       <p class="not-found" v-if="!listLoader && !data.length">None found</p>
     </main>
+    <Modal
+      :title="'Join Room'"
+      :buttonText="'Join'"
+      :loader="modalInfo.loader"
+      :show="modalShow.join"
+      :submit="joinRoomHandler"
+      :close="closeModals"
+    >
+      <ErrorableInput :error="modalInfo.formErrors.id">
+        <input type="text" placeholder="Room ID" v-model="modalInfo.formValues.id">
+      </ErrorableInput>
+    </Modal>
   </div>
 </template>
 
@@ -22,21 +34,35 @@ import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
 import Loader from 'vue-spinner/src/ClipLoader.vue';
 
+import Modal from '../components/Modal.vue';
 import NavBar from '../components/Navbar.vue';
 import RoomItem from '../components/RoomItem.vue';
 import QuestionItem from '../components/QuestionItem.vue';
+import ErrorableInput from '../components/ErrorableInput.vue';
 
 import { server } from '../config';
+import mixins from '../mixins';
 
 @Component({
-  components: { Loader, NavBar, RoomItem, QuestionItem }
+  components: { Loader, NavBar, RoomItem, QuestionItem, Modal, ErrorableInput },
+  mixins: [mixins]
 })
 export default class Home extends Vue {
   listLoader = true;
   path = '';
   data = [];
-  joinModal = false;
-  createModal = false;
+  modalShow = { join: false, create: false };
+  modalInfo = {
+    formValues: { id: '', title: '', creator: '' },
+    formErrors: { id: '', title: '', creator: '' },
+    show: false,
+    loader: false
+  };
+
+  closeModals() {
+    this.modalShow = { join: false, create: false };
+    this.resetErrors();
+  }
 
   // watchers
   @Watch('$route')
@@ -62,10 +88,50 @@ export default class Home extends Vue {
     this.listLoader = false;
   }
 
+  async joinRoomHandler() {
+    this.modalInfo.loader = true;
+
+    const result = await server.get('/accounts').catch(error => error.response);
+    const joined = result.data.data.joinedRooms.includes(this.modalInfo.formValues.id);
+
+    if (joined) {
+      this.modalInfo.formErrors.id = 'Room already joined';
+      this.modalInfo.loader = false;
+      return;
+    }
+
+    const response = await server.patch(`/rooms/${this.modalInfo.formValues.id}/join`).catch(error => error.response);
+    if (response.status === 404) {
+      this.modalInfo.formErrors.id = 'Room not found';
+      this.modalInfo.loader = false;
+      return;
+    }
+
+    if (response.data.errors.length) {
+      const error = response.data.errors[0].message;
+      this.modalInfo.formErrors.id = error;
+      this.modalInfo.loader = false;
+      return;
+    }
+
+    this.resetErrors();
+    this.$router.history.push('/joined-rooms');
+  }
+
+  resetErrors() {
+    this.modalInfo = {
+      formValues: { id: '', title: '', creator: '' },
+      formErrors: { id: '', title: '', creator: '' },
+      show: false,
+      loader: false
+    };
+  }
+
   // hooks
   mounted() {
     this.path = this.$router.history.current.path;
     this.setupData();
+    console.log(this.$options);
   }
 }
 </script>
