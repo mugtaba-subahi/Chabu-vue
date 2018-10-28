@@ -28,7 +28,7 @@ import Component from 'vue-class-component';
 import InputWithError from '../components/InputWithError.vue';
 import ButtonWithLoader from '../components/ButtonWithLoader.vue';
 
-import server from '../axios';
+import { server } from '../config';
 import mixins from '../mixins';
 
 @Component({
@@ -40,6 +40,7 @@ export default class Login extends Vue {
   formErrors = { username: '', password: '' };
   loginLoader = false;
 
+  // methods
   resetErrors() {
     this.formErrors = { username: '', password: '' };
   }

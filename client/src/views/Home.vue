@@ -10,9 +10,8 @@
       <Loader class="loader" :color="'#0379ff'" :size="'30px'" :loading="listLoader" v-if="listLoader"/>
       <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="path === '/joined-rooms'"/>
       <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="path === '/created-rooms'"/>
-      <!-- CONTINUE OFF HERE. FIX STUPID ATTRIBUTE WRAPPING THEN MERGE BOTH ROOMITEM TAGS INTO ONE -->
-      <!-- <p v-for="(item, i) in data" :key="i" v-if="path === '/created-rooms'">{{item.title}}</p>
-      <p v-for="(item, i) in data" :key="i" v-if="path === '/created-questions'">{{item.title}}</p>-->
+      <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="path === '/created-questions'"/>
+      <p class="not-found" v-if="!listLoader && !data.length">None found</p>
     </main>
   </div>
 </template>
@@ -27,7 +26,7 @@ import NavBar from '../components/Navbar.vue';
 import RoomItem from '../components/RoomItem.vue';
 import QuestionItem from '../components/QuestionItem.vue';
 
-import server from '../axios';
+import { server } from '../config';
 
 @Component({
   components: { Loader, NavBar, RoomItem, QuestionItem }
@@ -39,13 +38,16 @@ export default class Home extends Vue {
   joinModal = false;
   createModal = false;
 
+  // watchers
   @Watch('$route')
   pathChanged({ path }) {
     this.path = path;
     this.setupData();
   }
 
+  // methods
   async setupData() {
+    this.data = [];
     this.listLoader = true;
 
     const list = this.path.replace('/', '');
@@ -60,6 +62,7 @@ export default class Home extends Vue {
     this.listLoader = false;
   }
 
+  // hooks
   mounted() {
     this.path = this.$router.history.current.path;
     this.setupData();
@@ -106,7 +109,7 @@ export default class Home extends Vue {
   margin-top: 30px;
 }
 
-.notFound {
-  .notFound;
+.not-found {
+  .not-found;
 }
 </style>

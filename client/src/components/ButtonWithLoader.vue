@@ -26,6 +26,7 @@ import Loader from 'vue-spinner/src/ClipLoader.vue';
 export default class ButtonWithLoader extends Vue {
   spinnerColor = '#fff';
 
+  // hooks
   beforeMount() {
     if (this.buttonType === 'secondary') {
       this.spinnerColor = '#0379ff';

@@ -1,0 +1,149 @@
+<template>
+  <div class="question">
+    <i class="thumb" :class="{'thumb--true': liked}" @click="likeHandler"/>
+    <h3 class="title">{{content.title}}</h3>
+    <p class="likes">{{isNew || `${likes} likes`}}</p>
+    <p class="comments">1 comments</p>
+    <p class="time">{{content.timeAgo}}</p>
+    <i class="delete"/>
+  </div>
+</template>
+
+<script>
+import Vue from 'vue';
+import Component from 'vue-class-component';
+
+import { server, momentjs as moment } from '../config';
+
+@Component({
+  props: { content: { type: Object, required: true } }
+})
+export default class QuestionItem extends Vue {
+  liked = this.content.likedBy.includes('Jeu-44vAP');
+  likes = this.content.likedBy.length;
+
+  // computed
+  get isNew() {
+    const createdAt = moment(this.content.date);
+    const dateToday = moment(new Date());
+    return createdAt === dateToday ? 'new' : false;
+  }
+
+  // methods
+  async likeHandler() {
+    if (this.liked) {
+      this.likes -= 1;
+    } else {
+      this.likes += 1;
+    }
+
+    this.liked = !this.liked;
+    await server.patch(`/questions/${this.content.id}/like`);
+  }
+}
+</script>
+
+<style lang="less" scoped>
+@import (reference) '../styles/index.less';
+
+.question {
+  padding: @size-2--5 @size-4;
+  grid-column-gap: @size-3;
+  background-color: @light-gray-text-color;
+  border-bottom: solid 1px rgba(238, 238, 238, 50%);
+  display: grid;
+  opacity: 0;
+  animation: fade-in 350ms forwards;
+  align-items: center;
+  grid-template-columns: repeat(4, max-content) 1fr;
+  grid-template-areas:
+    'thumb  title  title     title  title'
+    'thumb  likes  comments  time   delete';
+}
+
+.question-today {
+  grid-template-columns: repeat(3, max-content) 1fr;
+  grid-template-areas:
+    'thumb  title     title     title'
+    'thumb  comments  time   delete';
+}
+
+.thumb {
+  .pad-lr-2;
+  .giga;
+  color: @primary-color;
+  grid-area: thumb;
+  color: transparent;
+  transition: 150ms;
+  -webkit-text-stroke-width: 1.5px;
+  -webkit-text-stroke-color: @light-border-color;
+
+  &:before {
+    content: '\e8dc';
+    font-family: 'Material Icons';
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &--true {
+    -webkit-text-stroke-color: @primary-color;
+  }
+}
+
+.title {
+  .milli;
+  grid-area: title;
+  color: @light-black-text-color;
+  font-family: 'roboto-medium';
+}
+
+.link {
+  color: @light-black-text-color !important;
+}
+
+.likes,
+.comments,
+.time,
+.delete {
+  .micro;
+  color: @gray-text-color;
+}
+
+.likes {
+  grid-area: likes;
+}
+
+.comments {
+  grid-area: comments;
+}
+
+.time {
+  grid-area: time;
+  color: @gray-text-color;
+}
+
+.delete {
+  grid-area: delete;
+  justify-self: end;
+  color: rgba(240, 44, 175, 0.3);
+  transition: 150ms;
+
+  &:hover {
+    color: rgba(240, 44, 103, 0.63);
+  }
+
+  &:after {
+    content: '\e872';
+    font-family: 'Material Icons';
+    font-size: 16px;
+  }
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+</style>

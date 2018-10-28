@@ -1,9 +1,10 @@
 import axios from 'axios';
+import moment from 'moment';
 
-const server = axios.create({
+export const server = axios.create({
   baseURL: 'http://localhost:3333/',
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true
 });
 
-export default server;
+export const momentjs = date => moment(date).format('MMM Do YY');
