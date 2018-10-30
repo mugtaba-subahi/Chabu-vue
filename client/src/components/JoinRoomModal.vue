@@ -19,7 +19,10 @@ import mixins from '../mixins';
 @Component({
   components: { Modal, ErrorableInput },
   mixins: [mixins],
-  props: { close: { type: Function, required: true } }
+  props: {
+    close: { type: Function, required: true },
+    success: { type: Function, required: true }
+  }
 })
 export default class JoinRoomModal extends Vue {
   formValues = { id: '' };
@@ -40,22 +43,23 @@ export default class JoinRoomModal extends Vue {
     }
 
     const response = await server.patch(`/rooms/${this.formValues.id}/join`).catch(error => error.response);
+    const { data, errors, ok } = response.data;
+
     if (response.status === 404) {
       this.formErrors.id = 'Room not found';
       this.loader = false;
       return;
     }
 
-    if (response.data.errors.length) {
-      const error = response.data.errors[0].message;
-      this.formErrors.id = error;
+    if (!ok) {
+      this.formErrors.id = errors[0].message;
       this.loader = false;
       return;
     }
 
     this.$router.history.push('/joined-rooms');
     this.close();
-    this.success(); // called to refresh data
+    this.success(data);
   }
 }
 </script>

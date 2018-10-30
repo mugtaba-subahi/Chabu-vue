@@ -37,8 +37,9 @@ export default class CreateRoomModal extends Vue {
     this.loader = true;
 
     const response = await server.post('/rooms', this.formValues).catch(error => error.response);
-    if (response.data.errors.length) {
-      const { errors } = response.data;
+    const { data, errors, ok } = response.data;
+
+    if (!ok) {
       this.formErrors = mixins.methods.appendErrorsMixin(errors, this.formErrors);
       this.loader = false;
       return;
@@ -46,7 +47,7 @@ export default class CreateRoomModal extends Vue {
 
     this.$router.history.push('/created-rooms');
     this.close();
-    this.success(); // called to refresh data
+    this.success(data);
   }
 }
 </script>

@@ -13,8 +13,8 @@
       <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="path === '/created-questions'"/>
       <p class="not-found" v-if="!listLoader && !data.length">None found</p>
     </main>
-    <JoinRoomModal :close="closeModals" v-if="joinRoomModal"></JoinRoomModal>
-    <CreateRoomModal :close="closeModals" :success="setupData" v-if="createRoomModal"></CreateRoomModal>
+    <JoinRoomModal :success="addToData" :close="closeModals" v-if="joinRoomModal"></JoinRoomModal>
+    <CreateRoomModal :success="addToData" :close="closeModals" v-if="createRoomModal"></CreateRoomModal>
   </div>
 </template>
 
@@ -67,6 +67,10 @@ export default class Home extends Vue {
 
     this.data = response.data.data.sort((a, b) => new Date(b.date) - new Date(a.date));
     this.listLoader = false;
+  }
+
+  addToData(data) {
+    this.data.unshift(data);
   }
 
   closeModals() {

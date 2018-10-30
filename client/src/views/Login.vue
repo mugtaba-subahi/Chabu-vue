@@ -41,13 +41,14 @@ export default class Login extends Vue {
     this.resetErrors();
 
     const response = await server.post('login', this.formValues).catch(error => error.response);
+    const { errors, ok } = response.data;
+
     if (!response) {
       this.loginLoader = false;
       return;
     }
 
-    if (response.data.errors.length) {
-      const { errors } = response.data;
+    if (!ok) {
       this.formErrors = mixins.methods.appendErrorsMixin(errors, this.formErrors);
       this.loginLoader = false;
       return;
