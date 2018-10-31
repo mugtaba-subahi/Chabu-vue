@@ -14,9 +14,9 @@ export default new Vuex.Store({
     createdRooms: [],
     createdQuestions: [],
     modals: {
-      joinRoom: false,
-      createRoom: false,
-      deleteQuestion: false
+      joinRoom: { show: false },
+      createRoom: { show: false },
+      deleteQuestion: { show: false, id: '' }
     }
   },
   getters: {
@@ -24,7 +24,7 @@ export default new Vuex.Store({
     joinedRooms: state => state.joinedRooms,
     createdRooms: state => state.createdRooms,
     createdQuestions: state => state.createdQuestions,
-    getModal: state => modal => state.modals[modal]
+    getModal: state => modal => state.modals[modal].show
   },
   mutations: {
     setAccountID: (state, id) => {
@@ -57,8 +57,18 @@ export default new Vuex.Store({
       !payload.liked ? question.likedBy.splice(accountIDIndex, 1) : question.likedBy.push(state.accountID); // eslint-disable-line
       state.createdQuestions[questionIndex] = question;
     },
-    toggleModal: (state, modal) => {
-      state.modals[modal] = !state.modals[modal];
+    toggleModal: (state, { modal, id }) => {
+      const updatedModal = { show: !state.modals[modal].show, id };
+      state.modals[modal] = updatedModal;
+    },
+    deleteQuestion: state => {
+      let questionIndex = null;
+      state.createdQuestions.find((item, i) => {
+        questionIndex = i;
+        return item.id === state.modals.deleteQuestion.id;
+      });
+
+      state.createdQuestions.splice(questionIndex, 1);
     }
   },
   actions: {
@@ -81,6 +91,11 @@ export default new Vuex.Store({
     },
     joinRoom: ({ commit }, payload) => commit('joinRoom', payload),
     createRoom: ({ commit }, payload) => commit('createRoom', payload),
-    toggleModal: ({ commit }, payload) => commit('toggleModal', payload)
+    toggleModal: ({ commit }, payload) => commit('toggleModal', payload),
+    deleteQuestion: ({ state, commit }) => {
+      const question = state.createdQuestions.find(item => item.id === state.modals.deleteQuestion.id);
+      api.deleteQuestion(question.room, question.id);
+      commit('deleteQuestion');
+    }
   }
 });

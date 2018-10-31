@@ -11,20 +11,20 @@ import Component from 'vue-class-component';
 import Modal from '../components/Modal.vue';
 
 @Component({
-  components: { Modal },
-  props: { questionID: { type: String, required: true } }
+  components: { Modal }
 })
 export default class DeleteQuestionModal extends Vue {
   loader = false;
 
   // methods
   close() {
-    this.$store.dispatch('toggleModal', 'deleteQuestion');
+    this.$store.dispatch('toggleModal', { modal: 'deleteQuestion', id: null });
   }
 
-  // WORK FROM HERE --- HOW TO GET QUESTIONID? CANT USE PROPS...
   deleteQuestion() {
-    this.$store.dispatch('deleteQuestion', this.questionID);
+    this.loader = true;
+    this.$store.dispatch('deleteQuestion');
+    this.close();
   }
 }
 </script>

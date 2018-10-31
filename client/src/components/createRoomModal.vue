@@ -30,7 +30,7 @@ export default class CreateRoomModal extends Vue {
 
   // methods
   close() {
-    this.$store.dispatch('toggleModal', 'createRoom');
+    this.$store.dispatch('toggleModal', { modal: 'createRoom' });
   }
 
   async createRoomHandler() {

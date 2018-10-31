@@ -34,3 +34,5 @@ export const getCreatedQuestions = async () => {
 };
 
 export const likeQuestion = id => server.patch(`/questions/${id}/like`);
+
+export const deleteQuestion = (roomID, questionID) => server.delete(`/rooms/${roomID}/${questionID}`).catch(error => error.response);
