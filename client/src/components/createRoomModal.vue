@@ -16,16 +16,13 @@ import Component from 'vue-class-component';
 import Modal from '../components/Modal.vue';
 import ErrorableInput from '../components/ErrorableInput.vue';
 
-import { server } from '../config';
+import * as api from '../api';
 import mixins from '../mixins';
 
 @Component({
   components: { Modal, ErrorableInput },
   mixins: [mixins],
-  props: {
-    close: { type: Function, required: true },
-    success: { type: Function, required: true }
-  }
+  props: { close: { type: Function, required: true } }
 })
 export default class CreateRoomModal extends Vue {
   formValues = { title: '', creator: '' };
@@ -36,18 +33,17 @@ export default class CreateRoomModal extends Vue {
   async createRoomHandler() {
     this.loader = true;
 
-    const response = await server.post('/rooms', this.formValues).catch(error => error.response);
-    const { data, errors, ok } = response.data;
+    const response = await api.createRoom(this.formValues);
 
-    if (!ok) {
-      this.formErrors = mixins.methods.appendErrorsMixin(errors, this.formErrors);
+    if (!response.ok) {
+      this.formErrors = mixins.methods.appendErrorsMixin(response.errors, this.formErrors);
       this.loader = false;
       return;
     }
 
+    this.$store.dispatch('pushNewRoom', response.data);
     this.$router.history.push('/created-rooms');
     this.close();
-    this.success(data);
   }
 }
 </script>

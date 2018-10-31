@@ -8,13 +8,13 @@
     <NavBar/>
     <main>
       <Loader class="loader" :color="'#0379ff'" :size="'30px'" :loading="listLoader" v-if="listLoader"/>
-      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="path === '/joined-rooms'"/>
-      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="path === '/created-rooms'"/>
-      <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="path === '/created-questions'"/>
+      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="!listLoader && path === 'joinedRooms'"/>
+      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="!listLoader && path === 'createdRooms'"/>
+      <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="!listLoader && path === 'createdQuestions'"/>
       <p class="not-found" v-if="!listLoader && !data.length">None found</p>
     </main>
-    <JoinRoomModal :success="addToData" :close="closeModals" v-if="joinRoomModal"></JoinRoomModal>
-    <CreateRoomModal :success="addToData" :close="closeModals" v-if="createRoomModal"></CreateRoomModal>
+    <JoinRoomModal :close="closeModals" v-if="joinRoomModal"></JoinRoomModal>
+    <CreateRoomModal :close="closeModals" v-if="createRoomModal"></CreateRoomModal>
   </div>
 </template>
 
@@ -31,7 +31,6 @@ import QuestionItem from '../components/QuestionItem.vue';
 import JoinRoomModal from '../components/JoinRoomModal.vue';
 import CreateRoomModal from '../components/createRoomModal.vue';
 
-import { server } from '../config';
 import mixins from '../mixins';
 
 @Component({
@@ -47,30 +46,16 @@ export default class Home extends Vue {
 
   // watchers
   @Watch('$route')
-  pathChanged({ path }) {
-    this.path = path;
+  pathChanged() {
     this.setupData();
   }
 
   // methods
-  async setupData() {
-    this.data = [];
-    this.listLoader = true;
-
-    const list = this.path.replace('/', '');
-    const response = await server.get(`/accounts/${list}`).catch(error => error.response);
-
-    if (!response || response.status === 401) {
-      // this.props.unsetAccount(); LOG USER OUT
-      return;
-    }
-
-    this.data = response.data.data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    this.listLoader = false;
-  }
-
-  addToData(data) {
-    this.data.unshift(data);
+  getURLCamelCase() {
+    const url = this.$router.history.current.path.replace('/', '');
+    const camelCaseURL = url.replace(/-([a-z])/g, g => g[1].toUpperCase());
+    this.path = camelCaseURL;
+    return camelCaseURL;
   }
 
   closeModals() {
@@ -78,9 +63,22 @@ export default class Home extends Vue {
     this.createRoomModal = false;
   }
 
+  async setupData() {
+    this.listLoader = true;
+
+    const list = this.getURLCamelCase();
+    const result = this.$store.getters[list];
+
+    if (!result.length) await this.$store.dispatch(list);
+
+    // if (!data) this.props.unsetAccount(); LOG USER OUT
+
+    this.data = this.$store.getters[list];
+    this.listLoader = false;
+  }
+
   // hooks
   mounted() {
-    this.path = this.$router.history.current.path;
     this.setupData();
   }
 }
