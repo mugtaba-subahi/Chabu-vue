@@ -13,13 +13,13 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
-import { server, momentjs as moment } from '../config';
+import { moment } from '../config';
 
 @Component({
   props: { content: { type: Object, required: true } }
 })
 export default class QuestionItem extends Vue {
-  liked = this.content.likedBy.includes('Jeu-44vAP');
+  liked = false;
   likes = this.content.likedBy.length;
 
   // computed
@@ -33,7 +33,13 @@ export default class QuestionItem extends Vue {
   likedHandler() {
     this.liked ? this.likes-- : this.likes++; // eslint-disable-line
     this.liked = !this.liked;
-    server.patch(`/questions/${this.content.id}/like`);
+    this.$store.dispatch('likeQuestion', { id: this.content.id, liked: this.liked });
+  }
+
+  // hooks
+  created() {
+    const accountID = this.$store.getters.accountID; // eslint-disable-line
+    this.liked = this.content.likedBy.includes(accountID);
   }
 }
 </script>

@@ -41,7 +41,7 @@ export default class Login extends Vue {
     this.resetErrors();
 
     const response = await server.post('login', this.formValues).catch(error => error.response);
-    const { errors, ok } = response.data;
+    const { data, errors, ok } = response.data;
 
     if (!response) {
       this.loginLoader = false;
@@ -54,7 +54,10 @@ export default class Login extends Vue {
       return;
     }
 
+    console.log(response);
+
     this.loginLoader = false;
+    this.$store.dispatch('setAccountID', data.accountID);
     this.$router.push('/joined-rooms');
   }
 }

@@ -32,3 +32,5 @@ export const getCreatedQuestions = async () => {
   if (!response || response.status === 401) return false;
   return data.sort((a, b) => new Date(b.date) - new Date(a.date));
 };
+
+export const likeQuestion = id => server.patch(`/questions/${id}/like`);

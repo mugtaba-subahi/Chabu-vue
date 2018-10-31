@@ -1,5 +1,5 @@
 import axios from 'axios';
-import moment from 'moment';
+import momentjs from 'moment';
 
 export const server = axios.create({
   baseURL: 'http://localhost:3333/',
@@ -7,4 +7,4 @@ export const server = axios.create({
   withCredentials: true
 });
 
-export const momentjs = date => moment(date).format('MMM Do YY');
+export const moment = date => momentjs(date).format('MMM Do YY');

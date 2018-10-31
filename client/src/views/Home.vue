@@ -8,9 +8,9 @@
     <NavBar/>
     <main>
       <Loader class="loader" :color="'#0379ff'" :size="'30px'" :loading="listLoader" v-if="listLoader"/>
-      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="!listLoader && path === 'joinedRooms'"/>
-      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="!listLoader && path === 'createdRooms'"/>
-      <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="!listLoader && path === 'createdQuestions'"/>
+      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="!listLoader && path == 'joinedRooms'"/>
+      <RoomItem v-for="(item, i) in data" :key="i" :content="item" v-if="!listLoader && path == 'createdRooms'"/>
+      <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="!listLoader && path == 'createdQuestions'"/>
       <p class="not-found" v-if="!listLoader && !data.length">None found</p>
     </main>
     <JoinRoomModal :close="closeModals" v-if="joinRoomModal"></JoinRoomModal>
@@ -69,8 +69,8 @@ export default class Home extends Vue {
     const list = this.getURLCamelCase();
     const result = this.$store.getters[list];
 
-    if (!result.length) await this.$store.dispatch(list);
-
+    const hasNewData = result.some(item => item.new);
+    if (!result.length || hasNewData) await this.$store.dispatch(list);
     // if (!data) this.props.unsetAccount(); LOG USER OUT
 
     this.data = this.$store.getters[list];

@@ -41,7 +41,7 @@ export default class CreateRoomModal extends Vue {
       return;
     }
 
-    this.$store.dispatch('pushNewRoom', response.data);
+    this.$store.dispatch('createRoom', response.data);
     this.$router.history.push('/created-rooms');
     this.close();
   }

@@ -19,10 +19,7 @@ import mixins from '../mixins';
 @Component({
   components: { Modal, ErrorableInput },
   mixins: [mixins],
-  props: {
-    close: { type: Function, required: true },
-    success: { type: Function, required: true }
-  }
+  props: { close: { type: Function, required: true } }
 })
 export default class JoinRoomModal extends Vue {
   formValues = { id: '' };
@@ -57,9 +54,9 @@ export default class JoinRoomModal extends Vue {
       return;
     }
 
+    this.$store.dispatch('joinRoom', data);
     this.$router.history.push('/joined-rooms');
     this.close();
-    this.success(data);
   }
 }
 </script>
