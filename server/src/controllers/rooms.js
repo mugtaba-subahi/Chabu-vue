@@ -14,7 +14,7 @@ const joinRoomLogic = async (account, roomID) => {
 
   await Promise.all([updateAccount, updateRoom]);
 
-  return true;
+  return room;
 };
 
 export const joinRoom = async (req, res, next) => {
@@ -28,6 +28,7 @@ export const joinRoom = async (req, res, next) => {
   }
 
   response.ok = true;
+  response.data = joinedRoom;
   res.status(200).json(response);
 };
 
