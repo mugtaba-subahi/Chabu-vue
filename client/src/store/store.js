@@ -12,13 +12,19 @@ export default new Vuex.Store({
     accountID: 'Jeu-44vAP',
     joinedRooms: [],
     createdRooms: [],
-    createdQuestions: []
+    createdQuestions: [],
+    modals: {
+      joinRoom: false,
+      createRoom: false,
+      deleteQuestion: false
+    }
   },
   getters: {
     accountID: state => state.accountID,
     joinedRooms: state => state.joinedRooms,
     createdRooms: state => state.createdRooms,
-    createdQuestions: state => state.createdQuestions
+    createdQuestions: state => state.createdQuestions,
+    getModal: state => modal => state.modals[modal]
   },
   mutations: {
     setAccountID: (state, id) => {
@@ -50,6 +56,9 @@ export default new Vuex.Store({
       const accountIDIndex = question.likedBy.indexOf(state.accountID);
       !payload.liked ? question.likedBy.splice(accountIDIndex, 1) : question.likedBy.push(state.accountID); // eslint-disable-line
       state.createdQuestions[questionIndex] = question;
+    },
+    toggleModal: (state, modal) => {
+      state.modals[modal] = !state.modals[modal];
     }
   },
   actions: {
@@ -71,6 +80,7 @@ export default new Vuex.Store({
       commit('likeQuestion', payload);
     },
     joinRoom: ({ commit }, payload) => commit('joinRoom', payload),
-    createRoom: ({ commit }, payload) => commit('createRoom', payload)
+    createRoom: ({ commit }, payload) => commit('createRoom', payload),
+    toggleModal: ({ commit }, payload) => commit('toggleModal', payload)
   }
 });

@@ -1,5 +1,5 @@
 <template>
-  <Modal :title="'Join Room'" :buttonText="'Join'" :loader="loader" :submit="joinRoomHandler" :close="close">
+  <Modal title="Join Room" buttonText="Join" :loader="loader" :submit="joinRoomHandler" :close="close">
     <ErrorableInput :error="formErrors.id">
       <input type="text" placeholder="Room ID" v-model="formValues.id">
     </ErrorableInput>
@@ -18,8 +18,7 @@ import mixins from '../mixins';
 
 @Component({
   components: { Modal, ErrorableInput },
-  mixins: [mixins],
-  props: { close: { type: Function, required: true } }
+  mixins: [mixins]
 })
 export default class JoinRoomModal extends Vue {
   formValues = { id: '' };
@@ -27,6 +26,10 @@ export default class JoinRoomModal extends Vue {
   loader = false;
 
   // methods
+  close() {
+    this.$store.dispatch('toggleModal', 'joinRoom');
+  }
+
   async joinRoomHandler() {
     this.loader = true;
 
@@ -61,5 +64,5 @@ export default class JoinRoomModal extends Vue {
 }
 </script>
 
-<style>
+<style lang="less" scoped>
 </style>

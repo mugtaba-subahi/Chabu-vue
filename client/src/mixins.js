@@ -9,6 +9,9 @@ export default {
       });
 
       return errorsObject;
+    },
+    toggleModalMixin(modal) {
+      this.$store.dispatch('toggleModal', modal);
     }
   }
 };

@@ -5,7 +5,7 @@
     <p class="likes">{{isNew || `${likes} likes`}}</p>
     <p class="comments">1 comments</p>
     <p class="time">{{content.timeAgo}}</p>
-    <i class="delete"/>
+    <i class="delete" @click.stop="toggleModalMixin('deleteQuestion')"/>
   </router-link>
 </template>
 
@@ -13,10 +13,15 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
+import DeleteQuestionModal from '../components/DeleteQuestionModal.vue';
+
 import { moment } from '../config';
+import mixins from '../mixins';
 
 @Component({
-  props: { content: { type: Object, required: true } }
+  components: { DeleteQuestionModal },
+  props: { content: { type: Object, required: true } },
+  mixins: [mixins]
 })
 export default class QuestionItem extends Vue {
   liked = false;

@@ -1,5 +1,5 @@
 <template>
-  <Modal :title="'Create Room'" :buttonText="'Create'" :loader="loader" :submit="createRoomHandler" :close="close">
+  <Modal title="Create Room" buttonText="Create" :loader="loader" :submit="createRoomHandler" :close="close">
     <ErrorableInput :error="formErrors.title">
       <input type="text" placeholder="Room Title" v-model="formValues.title">
     </ErrorableInput>
@@ -21,8 +21,7 @@ import mixins from '../mixins';
 
 @Component({
   components: { Modal, ErrorableInput },
-  mixins: [mixins],
-  props: { close: { type: Function, required: true } }
+  mixins: [mixins]
 })
 export default class CreateRoomModal extends Vue {
   formValues = { title: '', creator: '' };
@@ -30,6 +29,10 @@ export default class CreateRoomModal extends Vue {
   loader = false;
 
   // methods
+  close() {
+    this.$store.dispatch('toggleModal', 'createRoom');
+  }
+
   async createRoomHandler() {
     this.loader = true;
 

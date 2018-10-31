@@ -28,8 +28,8 @@ import ButtonWithLoader from './ButtonWithLoader.vue';
     submit: { type: Function, required: true },
     close: { type: Function, required: true },
     loader: { type: Boolean, required: true },
-    title: { type: String, required: true }
-    // modalType: { type: String }
+    title: { type: String, required: true },
+    modalType: { type: String, default: 'primary' }
   },
   components: { ButtonWithLoader }
 })

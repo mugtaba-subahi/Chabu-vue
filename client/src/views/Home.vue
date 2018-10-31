@@ -1,8 +1,8 @@
 <template>
   <div class="home-component">
     <header class="head">
-      <button class="head__join" @click="joinRoomModal = true">Join room</button>
-      <button class="head__create" @click="createRoomModal = true">Create room</button>
+      <button class="head__join" @click="toggleModalMixin('joinRoom')">Join room</button>
+      <button class="head__create" @click="toggleModalMixin('createRoom')">Create room</button>
       <router-link class="head__settings" tag="a" to="/settings"/>
     </header>
     <NavBar/>
@@ -13,8 +13,6 @@
       <QuestionItem v-for="(item, i) in data" :content="item" :key="i" v-if="!listLoader && path == 'createdQuestions'"/>
       <p class="not-found" v-if="!listLoader && !data.length">None found</p>
     </main>
-    <JoinRoomModal :close="closeModals" v-if="joinRoomModal"></JoinRoomModal>
-    <CreateRoomModal :close="closeModals" v-if="createRoomModal"></CreateRoomModal>
   </div>
 </template>
 
@@ -24,25 +22,20 @@ import Component from 'vue-class-component';
 import Loader from 'vue-spinner/src/ClipLoader.vue';
 import { Watch } from 'vue-property-decorator';
 
-import Modal from '../components/Modal.vue';
 import NavBar from '../components/Navbar.vue';
 import RoomItem from '../components/RoomItem.vue';
 import QuestionItem from '../components/QuestionItem.vue';
-import JoinRoomModal from '../components/JoinRoomModal.vue';
-import CreateRoomModal from '../components/createRoomModal.vue';
 
 import mixins from '../mixins';
 
 @Component({
-  components: { Loader, NavBar, RoomItem, QuestionItem, Modal, JoinRoomModal, CreateRoomModal },
+  components: { Loader, NavBar, RoomItem, QuestionItem },
   mixins: [mixins]
 })
 export default class Home extends Vue {
   listLoader = true;
   path = '';
   data = [];
-  joinRoomModal = false;
-  createRoomModal = false;
 
   // watchers
   @Watch('$route')
@@ -58,11 +51,6 @@ export default class Home extends Vue {
     return camelCaseURL;
   }
 
-  closeModals() {
-    this.joinRoomModal = false;
-    this.createRoomModal = false;
-  }
-
   async setupData() {
     this.listLoader = true;
 
@@ -71,7 +59,6 @@ export default class Home extends Vue {
 
     const hasNewData = result.some(item => item.new);
     if (!result.length || hasNewData) await this.$store.dispatch(list);
-    // if (!data) this.props.unsetAccount(); LOG USER OUT
 
     this.data = this.$store.getters[list];
     this.listLoader = false;
